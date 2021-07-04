@@ -1,0 +1,204 @@
+{
+    "type": [
+        "null",
+        "object"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "estabelecimento_uf": {
+            "type": [
+                "string"
+            ]
+        },
+        "vacina_categoria_nome": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "vacina_fabricante_referencia": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "sistema_origem": {
+            "type": [
+                "string"
+            ]
+        },
+        "id_sistema_origem": {
+            "type": [
+                "string"
+            ]
+        },
+        "paciente_endereco_coPais": {
+            "type": [
+                "string"
+            ]
+        },
+        "data_importacao_rnds": {
+            "type": [
+                "string"
+            ]
+        },
+        "paciente_endereco_nmMunicipio": {
+            "type": [
+                "string"
+            ]
+        },
+        "estabelecimento_municipio_nome": {
+            "type": [
+                "string"
+            ]
+        },
+        "vacina_grupoAtendimento_nome": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "vacina_dataAplicacao": {
+            "type": [
+                "string"
+            ]
+        },
+        "estabelecimento_razaoSocial": {
+            "type": [
+                "string"
+            ]
+        },
+        "vacina_categoria_codigo": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "paciente_idade": {
+            "type": [
+                "integer"
+            ]
+        },
+        "estabelecimento_valor": {
+            "type": [
+                "string"
+            ]
+        },
+        "timestamp": {
+            "type": [
+                "string"
+            ]
+        },
+        "paciente_id": {
+            "type": [
+                "string"
+            ]
+        },
+        "paciente_endereco_cep": {
+            "type": [
+                "string"
+            ]
+        },
+        "paciente_racaCor_valor": {
+            "type": [
+                "string"
+            ]
+        },
+        "vacina_nome": {
+            "type": [
+                "string"
+            ]
+        },
+        "paciente_enumSexoBiologico": {
+            "type": [
+                "string"
+            ]
+        },
+        "estabelecimento_municipio_codigo": {
+            "type": [
+                "string"
+            ]
+        },
+        "paciente_nacionalidade_enumNacionalidade": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "vacina_grupoAtendimento_codigo": {
+            "type": [
+                "string"
+            ]
+        },
+        "vacina_fabricante_nome": {
+            "type": [
+                "string"
+            ]
+        },
+        "vacina_codigo": {
+            "type": [
+                "string"
+            ]
+        },
+        "paciente_endereco_coIbgeMunicipio": {
+            "type": [
+                "string"
+            ]
+        },
+        "redshift": {
+            "type": [
+                "string"
+            ]
+        },
+        "vacina_lote": {
+            "type": [
+                "string"
+            ]
+        },
+        "version": {
+            "type": [
+                "string"
+            ]
+        },
+        "document_id": {
+            "type": [
+                "string"
+            ]
+        },
+        "paciente_endereco_uf": {
+            "type": [
+                "string"
+            ]
+        },
+        "paciente_racaCor_codigo": {
+            "type": [
+                "string"
+            ]
+        },
+        "vacina_descricao_dose": {
+            "type": [
+                "string"
+            ]
+        },
+        "estalecimento_noFantasia": {
+            "type": [
+                "string"
+            ]
+        },
+        "paciente_endereco_nmPais": {
+            "type": [
+                "string"
+            ]
+        },
+        "paciente_dataNascimento": {
+            "type": [
+                "string"
+            ]
+        },
+        "from_date": {
+            "type": [
+                "string"
+            ]
+        }
+    }
+}

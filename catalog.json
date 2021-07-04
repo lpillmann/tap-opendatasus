@@ -1,0 +1,572 @@
+{
+  "streams": [
+    {
+      "tap_stream_id": "vaccines",
+      "key_properties": [],
+      "schema": {
+        "properties": {
+          "estabelecimento_uf": {
+            "type": [
+              "string"
+            ]
+          },
+          "vacina_categoria_nome": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "vacina_fabricante_referencia": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sistema_origem": {
+            "type": [
+              "string"
+            ]
+          },
+          "id_sistema_origem": {
+            "type": [
+              "string"
+            ]
+          },
+          "paciente_endereco_coPais": {
+            "type": [
+              "string"
+            ]
+          },
+          "data_importacao_rnds": {
+            "type": [
+              "string"
+            ]
+          },
+          "paciente_endereco_nmMunicipio": {
+            "type": [
+              "string"
+            ]
+          },
+          "estabelecimento_municipio_nome": {
+            "type": [
+              "string"
+            ]
+          },
+          "vacina_grupoAtendimento_nome": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "vacina_dataAplicacao": {
+            "type": [
+              "string"
+            ]
+          },
+          "estabelecimento_razaoSocial": {
+            "type": [
+              "string"
+            ]
+          },
+          "vacina_categoria_codigo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "paciente_idade": {
+            "type": [
+              "integer"
+            ]
+          },
+          "estabelecimento_valor": {
+            "type": [
+              "string"
+            ]
+          },
+          "timestamp": {
+            "type": [
+              "string"
+            ]
+          },
+          "paciente_id": {
+            "type": [
+              "string"
+            ]
+          },
+          "paciente_endereco_cep": {
+            "type": [
+              "string"
+            ]
+          },
+          "paciente_racaCor_valor": {
+            "type": [
+              "string"
+            ]
+          },
+          "vacina_nome": {
+            "type": [
+              "string"
+            ]
+          },
+          "paciente_enumSexoBiologico": {
+            "type": [
+              "string"
+            ]
+          },
+          "estabelecimento_municipio_codigo": {
+            "type": [
+              "string"
+            ]
+          },
+          "paciente_nacionalidade_enumNacionalidade": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "vacina_grupoAtendimento_codigo": {
+            "type": [
+              "string"
+            ]
+          },
+          "vacina_fabricante_nome": {
+            "type": [
+              "string"
+            ]
+          },
+          "vacina_codigo": {
+            "type": [
+              "string"
+            ]
+          },
+          "paciente_endereco_coIbgeMunicipio": {
+            "type": [
+              "string"
+            ]
+          },
+          "redshift": {
+            "type": [
+              "string"
+            ]
+          },
+          "vacina_lote": {
+            "type": [
+              "string"
+            ]
+          },
+          "version": {
+            "type": [
+              "string"
+            ]
+          },
+          "document_id": {
+            "type": [
+              "string"
+            ]
+          },
+          "paciente_endereco_uf": {
+            "type": [
+              "string"
+            ]
+          },
+          "paciente_racaCor_codigo": {
+            "type": [
+              "string"
+            ]
+          },
+          "vacina_descricao_dose": {
+            "type": [
+              "string"
+            ]
+          },
+          "estalecimento_noFantasia": {
+            "type": [
+              "string"
+            ]
+          },
+          "paciente_endereco_nmPais": {
+            "type": [
+              "string"
+            ]
+          },
+          "paciente_dataNascimento": {
+            "type": [
+              "string"
+            ]
+          },
+          "from_date": {
+              "type":[
+                  "string"
+              ]
+          }
+        },
+        "type": [
+          "null",
+          "object"
+        ],
+        "additionalProperties": false
+      },
+      "stream": "vaccines",
+      "metadata": [
+        {
+          "breadcrumb": [],
+          "metadata": {
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "day"
+          ],
+          "metadata": {
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "estabelecimento_uf"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "vacina_categoria_nome"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "vacina_fabricante_referencia"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "sistema_origem"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "id_sistema_origem"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "paciente_endereco_coPais"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "data_importacao_rnds"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "paciente_endereco_nmMunicipio"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "estabelecimento_municipio_nome"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "vacina_grupoAtendimento_nome"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "vacina_dataAplicacao"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "estabelecimento_razaoSocial"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "vacina_categoria_codigo"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "paciente_idade"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "estabelecimento_valor"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "timestamp"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "paciente_id"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "paciente_endereco_cep"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "paciente_racaCor_valor"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "vacina_nome"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "paciente_enumSexoBiologico"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "estabelecimento_municipio_codigo"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "paciente_nacionalidade_enumNacionalidade"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "vacina_grupoAtendimento_codigo"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "vacina_fabricante_nome"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "vacina_codigo"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "paciente_endereco_coIbgeMunicipio"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "redshift"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "vacina_lote"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "version"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "document_id"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "paciente_endereco_uf"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "paciente_racaCor_codigo"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "vacina_descricao_dose"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "estalecimento_noFantasia"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "paciente_endereco_nmPais"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "paciente_dataNascimento"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "from_date"
+          ],
+          "metadata": {
+            "selected": true
+          } 
+        }
+      ]
+    }
+  ]
+}
