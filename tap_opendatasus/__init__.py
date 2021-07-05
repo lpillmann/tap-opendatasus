@@ -126,7 +126,7 @@ def sync_vaccines(state, stream) -> tuple:
             vaccines_search = get_vaccines(state_abbrev, from_date, to_date)
             payload = dict()
             for hit in vaccines_search.scan():
-                # List one by one to deal with edge cases (e.g. columns with @ prefix and from_date)
+                # List one by one to deal with edge cases (e.g. columns with @ prefix and year_month)
                 # fmt: off
                 payload["estabelecimento_uf"] = hit["estabelecimento_uf"]
                 payload["vacina_categoria_nome"] = hit["vacina_categoria_nome"]
