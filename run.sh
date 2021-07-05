@@ -7,8 +7,10 @@ STATE_ABBREV=$1
 YEAR_MONTH=$2
 
 # For local extraction
-BASE_DATA_PATH="./data"
-destination_path="$BASE_DATA_PATH/$STATE_ABBREV/$YEAR_MONTH"
+# BASE_DATA_PATH="./data"
+# destination_path="$BASE_DATA_PATH/$STATE_ABBREV/$YEAR_MONTH"
+# Create destination directory
+# mkdir -p "$destination_path"
 
 # For S3 extraction
 BASE_BUCKET_PATH="raw/vaccines"
@@ -48,9 +50,6 @@ TARGET_CONFIG_JSON=$( jq -n \
 
 echo $TAP_CONFIG_JSON > config.json
 echo $TARGET_CONFIG_JSON > s3_csv_config.json
-
-# Create destination directory
-mkdir -p "$destination_path"
 
 # Run tap and target
 make sync-s3-csv
