@@ -11,7 +11,7 @@ BASE_DATA_PATH="./data"
 destination_path="$BASE_DATA_PATH/$STATE_ABBREV/$YEAR_MONTH"
 
 # For S3 extraction
-BASE_BUCKET_PATH="vaccines/raw"
+BASE_BUCKET_PATH="raw/vaccines"
 s3_prefix="$BASE_BUCKET_PATH/$STATE_ABBREV/$YEAR_MONTH/"
 
 # Replace with your credentials (define them in your bash profile - ~/.zshrc in my case)
