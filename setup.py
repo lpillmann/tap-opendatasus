@@ -20,8 +20,6 @@ setup(
     tap-opendatasus=tap_opendatasus:main
     """,
     packages=["tap_opendatasus"],
-    package_data = {
-        "schemas": ["tap_opendatasus/schemas/*.json"]
-    },
+    package_data={"schemas": ["tap_opendatasus/schemas/*.json"]},
     include_package_data=True,
 )

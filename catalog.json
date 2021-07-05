@@ -195,7 +195,7 @@
               "string"
             ]
           },
-          "from_date": {
+          "year_month": {
               "type":[
                   "string"
               ]
@@ -560,7 +560,7 @@
         {
           "breadcrumb": [
             "properties",
-            "from_date"
+            "year_month"
           ],
           "metadata": {
             "selected": true

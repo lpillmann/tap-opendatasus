@@ -1,6 +1,5 @@
 import json
 import os
-import time
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
@@ -12,10 +11,13 @@ from singer.schema import Schema
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search
 
+from utils import get_month_end_date
 
-REQUIRED_CONFIG_KEYS = ["token"]
+
+REQUIRED_CONFIG_KEYS = ["year_month", "state_abbrev"]
 CONFIG = {
-    "token": None,
+    "year_month": None,
+    "state_abbrev": None,
 }
 STATE = {}
 LOGGER = singer.get_logger()
@@ -28,7 +30,7 @@ ES_INDEX = "desc-imunizacao"
 USER = "imunizacao_public"
 PASSWORD = "qlto5t&7r_@+#Tlstigi"
 
-INITIAL_FROM_DATE = '2021-01-01'
+INITIAL_FROM_DATE = "2021-01-01"
 
 
 def get_abs_path(path):
@@ -36,7 +38,7 @@ def get_abs_path(path):
 
 
 def load_schemas():
-    """ Load schemas from schemas folder """
+    """Load schemas from schemas folder"""
     schemas = {}
     for filename in os.listdir(get_abs_path("schemas")):
         path = get_abs_path("schemas") + "/" + filename
@@ -74,8 +76,8 @@ def discover():
 
 def get_vaccines(state_abbrev, from_date, to_date):
     """
-    Elasticsearch request to get vaccines data
-
+    Query Elasticsearch endpoint by state and date range
+    Returns Elasticsearch Search object (iterator)
     """
     client = Elasticsearch(hosts=ES_HOST, http_auth=(USER, PASSWORD))
     return (
@@ -96,15 +98,9 @@ def get_vaccines(state_abbrev, from_date, to_date):
 def sync_vaccines(state, stream) -> tuple:
     """Sync vaccines data from Open Data SUS
 
-    The API returns data in the following format
+    Note: Singer state functionality is currently disabled in favor of the Shell script that passes year month
+    and (Brazilian) state abbreviation. So the extraction sequence is determined externally as of now.
 
-    (TODO)
-
-    It uses Singer state feature to query the endpoint
-        - `state_abbrev_from_date`: last Brazilian state and from date queried (assumes alphabetical order for states)
-                                 e.g. SC|2021-01-01
-
-    At the end, returns a tuple key/val `state_abbrev_from_date` to be stored as the most recent state.
     """
     singer.write_schema(
         stream_name=stream.tap_stream_id,
@@ -112,88 +108,72 @@ def sync_vaccines(state, stream) -> tuple:
         key_properties=stream.key_properties,
     )
 
-    last_synced_state_abbrev, last_synced_from_date = None, None
-    
-    # Parse slug_reference_date string
-    last_synced_state_abbrev_from_date = state["bookmarks"][stream.tap_stream_id].get("state_abbrev_from_date")
-    if last_synced_state_abbrev_from_date:
-        last_synced_state_abbrev, last_synced_from_date = last_synced_state_abbrev_from_date.split("|")
-    
-    # State logic to define remaining state abbrevs and dates to query
-    all_state_abbrevs = utils.load_json("state_abbreviations.json")["state_abbreviations"]
-    remaining_state_abbrevs = all_state_abbrevs
-    if last_synced_state_abbrev:
-        last_synced_slug_idx = all_state_abbrevs.index(last_synced_state_abbrev)
-        # Stays in the last synced state abbrev, since from_date might be not finished yet
-        remaining_state_abbrevs = all_state_abbrevs[last_synced_slug_idx:]
-
-    from_date = None
-    if last_synced_from_date:
-        from_date = last_synced_from_date
-
-    state_abbrev = None
+    year_month = CONFIG.get("year_month")
+    state_abbrev = CONFIG.get("state_abbrev")
+    month_end_date = get_month_end_date(year_month)
+    from_date = year_month
     try:
-        for state_abbrev in remaining_state_abbrevs:
-            if not (state_abbrev == last_synced_state_abbrev):
-                from_date = INITIAL_FROM_DATE
-
-            while datetime.strptime(from_date, DATE_FORMAT) <= datetime.utcnow():
-                to_date = datetime.strftime(
-                    datetime.strptime(from_date, DATE_FORMAT) + relativedelta(days=+1),
-                    DATE_FORMAT,
-                )
-                LOGGER.info(f"\tsync_vaccines: Getting vaccines for {state_abbrev} from {from_date} to {to_date}")
-                vaccines_search = get_vaccines(state_abbrev, from_date, to_date)
-                vaccine = dict()
-                for hit in vaccines_search.scan():
-                    vaccine["estabelecimento_uf"] = hit["estabelecimento_uf"]
-                    vaccine["vacina_categoria_nome"] = hit["vacina_categoria_nome"]
-                    vaccine["vacina_fabricante_referencia"] = hit["vacina_fabricante_referencia"]
-                    vaccine["sistema_origem"] = hit["sistema_origem"]
-                    vaccine["id_sistema_origem"] = hit["id_sistema_origem"]
-                    vaccine["paciente_endereco_coPais"] = hit["paciente_endereco_coPais"]
-                    vaccine["data_importacao_rnds"] = hit["data_importacao_rnds"]
-                    vaccine["paciente_endereco_nmMunicipio"] = hit["paciente_endereco_nmMunicipio"]
-                    vaccine["estabelecimento_municipio_nome"] = hit["estabelecimento_municipio_nome"]
-                    vaccine["vacina_grupoAtendimento_nome"] = hit["vacina_grupoAtendimento_nome"]
-                    vaccine["vacina_dataAplicacao"] = hit["vacina_dataAplicacao"]
-                    vaccine["estabelecimento_razaoSocial"] = hit["estabelecimento_razaoSocial"]
-                    vaccine["vacina_categoria_codigo"] = hit["vacina_categoria_codigo"]
-                    vaccine["paciente_idade"] = hit["paciente_idade"]
-                    vaccine["estabelecimento_valor"] = hit["estabelecimento_valor"]
-                    vaccine["timestamp"] = hit["@timestamp"]
-                    vaccine["paciente_id"] = hit["paciente_id"]
-                    vaccine["paciente_endereco_cep"] = hit["paciente_endereco_cep"]
-                    vaccine["paciente_racaCor_valor"] = hit["paciente_racaCor_valor"]
-                    vaccine["vacina_nome"] = hit["vacina_nome"]
-                    vaccine["paciente_enumSexoBiologico"] = hit["paciente_enumSexoBiologico"]
-                    vaccine["estabelecimento_municipio_codigo"] = hit["estabelecimento_municipio_codigo"]
-                    vaccine["paciente_nacionalidade_enumNacionalidade"] = hit["paciente_nacionalidade_enumNacionalidade"]
-                    vaccine["vacina_grupoAtendimento_codigo"] = hit["vacina_grupoAtendimento_codigo"]
-                    vaccine["vacina_fabricante_nome"] = hit["vacina_fabricante_nome"]
-                    vaccine["vacina_codigo"] = hit["vacina_codigo"]
-                    vaccine["paciente_endereco_coIbgeMunicipio"] = hit["paciente_endereco_coIbgeMunicipio"]
-                    vaccine["redshift"] = hit["redshift"]
-                    vaccine["vacina_lote"] = hit["vacina_lote"]
-                    vaccine["version"] = hit["@version"]
-                    vaccine["document_id"] = hit["document_id"]
-                    vaccine["paciente_endereco_uf"] = hit["paciente_endereco_uf"]
-                    vaccine["paciente_racaCor_codigo"] = hit["paciente_racaCor_codigo"]
-                    vaccine["vacina_descricao_dose"] = hit["vacina_descricao_dose"]
-                    vaccine["estalecimento_noFantasia"] = hit["estalecimento_noFantasia"]
-                    vaccine["paciente_endereco_nmPais"] = hit["paciente_endereco_nmPais"]
-                    vaccine["paciente_dataNascimento"] = hit["paciente_dataNascimento"]
-                    vaccine["from_date"] = from_date
-                    singer.write_records(stream.tap_stream_id, [vaccine])
-                # time.sleep(1)
-                from_date = to_date
+        while datetime.strptime(from_date, DATE_FORMAT) <= datetime.strptime(
+            month_end_date, DATE_FORMAT
+        ):
+            to_date = datetime.strftime(
+                datetime.strptime(from_date, DATE_FORMAT) + relativedelta(days=+1),
+                DATE_FORMAT,
+            )
+            LOGGER.info(
+                f"\tsync_vaccines: Getting vaccines for {state_abbrev} from {from_date} to {to_date}"
+            )
+            vaccines_search = get_vaccines(state_abbrev, from_date, to_date)
+            payload = dict()
+            for hit in vaccines_search.scan():
+                # List one by one to deal with edge cases (e.g. columns with @ prefix and from_date)
+                # fmt: off
+                payload["estabelecimento_uf"] = hit["estabelecimento_uf"]
+                payload["vacina_categoria_nome"] = hit["vacina_categoria_nome"]
+                payload["vacina_fabricante_referencia"] = hit["vacina_fabricante_referencia"]
+                payload["sistema_origem"] = hit["sistema_origem"]
+                payload["id_sistema_origem"] = hit["id_sistema_origem"]
+                payload["paciente_endereco_coPais"] = hit["paciente_endereco_coPais"]
+                payload["data_importacao_rnds"] = hit["data_importacao_rnds"]
+                payload["paciente_endereco_nmMunicipio"] = hit["paciente_endereco_nmMunicipio"]
+                payload["estabelecimento_municipio_nome"] = hit["estabelecimento_municipio_nome"]
+                payload["vacina_grupoAtendimento_nome"] = hit["vacina_grupoAtendimento_nome"]
+                payload["vacina_dataAplicacao"] = hit["vacina_dataAplicacao"]
+                payload["estabelecimento_razaoSocial"] = hit["estabelecimento_razaoSocial"]
+                payload["vacina_categoria_codigo"] = hit["vacina_categoria_codigo"]
+                payload["paciente_idade"] = hit["paciente_idade"]
+                payload["estabelecimento_valor"] = hit["estabelecimento_valor"]
+                payload["timestamp"] = hit["@timestamp"]
+                payload["paciente_id"] = hit["paciente_id"]
+                payload["paciente_endereco_cep"] = hit["paciente_endereco_cep"]
+                payload["paciente_racaCor_valor"] = hit["paciente_racaCor_valor"]
+                payload["vacina_nome"] = hit["vacina_nome"]
+                payload["paciente_enumSexoBiologico"] = hit["paciente_enumSexoBiologico"]
+                payload["estabelecimento_municipio_codigo"] = hit["estabelecimento_municipio_codigo"]
+                payload["paciente_nacionalidade_enumNacionalidade"] = hit["paciente_nacionalidade_enumNacionalidade"]
+                payload["vacina_grupoAtendimento_codigo"] = hit["vacina_grupoAtendimento_codigo"]
+                payload["vacina_fabricante_nome"] = hit["vacina_fabricante_nome"]
+                payload["vacina_codigo"] = hit["vacina_codigo"]
+                payload["paciente_endereco_coIbgeMunicipio"] = hit["paciente_endereco_coIbgeMunicipio"]
+                payload["redshift"] = hit["redshift"]
+                payload["vacina_lote"] = hit["vacina_lote"]
+                payload["version"] = hit["@version"]
+                payload["document_id"] = hit["document_id"]
+                payload["paciente_endereco_uf"] = hit["paciente_endereco_uf"]
+                payload["paciente_racaCor_codigo"] = hit["paciente_racaCor_codigo"]
+                payload["vacina_descricao_dose"] = hit["vacina_descricao_dose"]
+                payload["estalecimento_noFantasia"] = hit["estalecimento_noFantasia"]
+                payload["paciente_endereco_nmPais"] = hit["paciente_endereco_nmPais"]
+                payload["paciente_dataNascimento"] = hit["paciente_dataNascimento"]
+                payload["year_month"] = year_month
+                singer.write_records(stream.tap_stream_id, [payload])
+                # fmt: on
+            from_date = to_date
 
     except Exception as e:
-        LOGGER.fatal(
-            f"Error: {repr(e)}"
-        )
+        LOGGER.fatal(f"Error: {repr(e)}")
 
-    return "state_abbrev_from_date", f"{state_abbrev}|{from_date}"
+    return "state_abbrev_year_month", f"{state_abbrev}|{from_date}"
 
 
 def sync(state, stream):
