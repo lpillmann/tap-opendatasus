@@ -4,6 +4,7 @@ venv/
 postgres_config.json
 s3_csv_config.json
 csv_config.json
+TODO
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
