@@ -47,9 +47,9 @@ deactivate
     source venv/bin/activate
     bash run.sh <state-abbrev> <year-month>
     ```
-    where `<state-abbrev>` is a valid Brazilian abbreviation (e.g. `SP` for São Paulo) and `<year-month>` is the month in which vaccines were applied (e.g. `2021-01-01`)
 
 ## Guide to add new endpoint
+    where `<state-abbrev>` is a valid Brazilian state abbreviation (e.g. `SP` for São Paulo) and `<year-month>` is the month in which vaccines were applied (e.g. `2021-01-01`). Data will be loaded into S3 bucket in partitioned fashion like `s3-bucket/.../SP/2021-01-01/vaccines_*.csv`.
 
 - Check its documentation
 - Create schema JSON to reflect each of the response field names & types
