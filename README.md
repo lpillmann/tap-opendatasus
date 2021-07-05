@@ -30,7 +30,7 @@ deactivate
 ```bash
 python3 -m venv ~/.virtualenvs/pipelinewise-target-s3-csv
 source ~/.virtualenvs/pipelinewise-target-s3-csv/bin/activate
-pip install pipelinewise-target-s3-csv
+pip install git+https://github.com/lpillmann/pipelinewise-target-s3-csv.git
 deactivate
 ```
 ### Install CSV target

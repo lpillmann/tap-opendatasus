@@ -42,14 +42,15 @@ TARGET_CONFIG_JSON=$( jq -n \
                   --arg ap "$AWS_PROFILE" \
                   --arg sb "$S3_BUCKET" \
                   --arg sp "$s3_prefix" \
-                  --arg co "gzip" \
                   --arg qc "'" \
                   --arg dl "," \
-                  '{disable_collection: true, aws_access_key_id: $ak, aws_secret_access_key: $ae, aws_profile: $ap, s3_bucket: $sb, s3_key_prefix: $sp, delimiter: $dl, quotechar: $qc, compression: $co}' )
+                  '{disable_collection: true, aws_access_key_id: $ak, aws_secret_access_key: $ae, aws_profile: $ap, s3_bucket: $sb, s3_key_prefix: $sp, delimiter: $dl, quotechar: $qc}' )
 
 
 echo $TAP_CONFIG_JSON > config.json
+# echo $TARGET_CONFIG_JSON > csv_config.json
 echo $TARGET_CONFIG_JSON > s3_csv_config.json
 
 # Run tap and target
+# make sync-csv
 make sync-s3-csv
