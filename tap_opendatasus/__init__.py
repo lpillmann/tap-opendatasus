@@ -30,8 +30,6 @@ ES_INDEX = "desc-imunizacao"
 USER = "imunizacao_public"
 PASSWORD = "qlto5t&7r_@+#Tlstigi"
 
-INITIAL_FROM_DATE = "2021-01-01"
-
 
 def get_abs_path(path):
     return os.path.join(os.path.dirname(os.path.realpath(__file__)), path)
@@ -77,7 +75,7 @@ def discover():
 def get_vaccines(state_abbrev, from_date, to_date):
     """
     Query Elasticsearch endpoint by state and date range
-    Returns Elasticsearch Search object (iterator)
+    Returns Elasticsearch Search object (generator)
     """
     client = Elasticsearch(hosts=ES_HOST, http_auth=(USER, PASSWORD))
     return (
@@ -111,7 +109,7 @@ def sync_vaccines(state, stream) -> tuple:
     year_month = CONFIG.get("year_month")
     state_abbrev = CONFIG.get("state_abbrev")
     month_end_date = get_month_end_date(year_month)
-    from_date = year_month
+    from_date = year_month  # First day of the month
     try:
         while datetime.strptime(from_date, DATE_FORMAT) <= datetime.strptime(
             month_end_date, DATE_FORMAT
@@ -126,7 +124,7 @@ def sync_vaccines(state, stream) -> tuple:
             vaccines_search = get_vaccines(state_abbrev, from_date, to_date)
             payload = dict()
             for hit in vaccines_search.scan():
-                # List one by one to deal with edge cases (e.g. columns with @ prefix and year_month)
+                # Assign one by one to deal with edge cases (e.g. columns with @ prefix and year_month)
                 # fmt: off
                 payload["estabelecimento_uf"] = hit["estabelecimento_uf"]
                 payload["vacina_categoria_nome"] = hit["vacina_categoria_nome"]

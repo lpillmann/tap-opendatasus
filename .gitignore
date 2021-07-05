@@ -1,7 +1,6 @@
 # custom
 *.csv
 venv/
-postgres_config.json
 s3_csv_config.json
 csv_config.json
 TODO
