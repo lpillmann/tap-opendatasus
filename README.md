@@ -26,7 +26,13 @@ source venv/bin/activate
 pip install -r requirements.txt
 deactivate
 ```
-
+### Install S3-CSV target
+```bash
+python3 -m venv ~/.virtualenvs/pipelinewise-target-s3-csv
+source ~/.virtualenvs/pipelinewise-target-s3-csv/bin/activate
+pip install pipelinewise-target-s3-csv
+deactivate
+```
 ### Install CSV target
 ```bash
 python3 -m venv ~/.virtualenvs/target-csv
@@ -39,8 +45,9 @@ deactivate
 - Run tap & target with:
     ```bash
     source venv/bin/activate
-    make sync-csv
+    bash run.sh <state-abbrev> <year-month>
     ```
+    where `<state-abbrev>` is a valid Brazilian abbreviation (e.g. `SP` for São Paulo) and `<year-month>` is the month in which vaccines were applied (e.g. `2021-01-01`)
 
 ## Guide to add new endpoint
 
