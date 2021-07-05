@@ -9,7 +9,7 @@ BASE_DATA_PATH="./data"
 
 destination_path="$BASE_DATA_PATH/$STATE_ABBREV/$YEAR_MONTH"
 
-
+# Build configuration files
 TAP_CONFIG_JSON=$( jq -n \
                   --arg ym "$YEAR_MONTH" \
                   --arg sa "$STATE_ABBREV" \
