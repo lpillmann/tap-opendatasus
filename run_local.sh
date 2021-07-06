@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Build tap and target configuration JSON files and run extraction
 # Usage: `bash run.sh SC 2021-01-01`
 

@@ -1,10 +1,15 @@
+#!/bin/bash
+
 # Build tap and target configuration JSON files and run extraction
-# Usage: `bash run.sh SC 2021-01-01`
+# Usage: 
+#    - Extract and load empty destination:     `bash run.sh SC 2021-01-01`
+#    - Extract and replace existing contents:  `bash run.sh SC 2021-01-01 replace`
 
 set -e
 
 STATE_ABBREV=$1
 YEAR_MONTH=$2
+LOAD_MODE=$3
 
 # For S3 extraction
 BASE_BUCKET_PATH="raw/vaccines"
@@ -37,6 +42,14 @@ TARGET_CONFIG_JSON=$( jq -n \
 
 echo $TAP_CONFIG_JSON > config.json
 echo $TARGET_CONFIG_JSON > s3_csv_config.json
+
+if [ "$LOAD_MODE" = "replace" ]
+then
+    # Clean up S3 destination
+    remove_from_destination="s3://$S3_BUCKET/$s3_prefix"
+    echo "Replace mode: Removing current file at $remove_from_destination"
+    aws s3 rm "$remove_from_destination" --profile "$UDACITY_AWS_PROFILE" --include "*.csv*" --recursive
+fi
 
 # Run tap and target
 make sync-s3-csv

@@ -1,3 +1,5 @@
+#!/bin/bash
+
 set -e
 
 STATE_ABBREV=$1
