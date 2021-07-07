@@ -7,13 +7,13 @@
 
 set -e
 
-STATE_ABBREV=$1
-YEAR_MONTH=$2
+YEAR_MONTH=$1
+STATE_ABBREV=$2
 LOAD_MODE=$3
 
 # For S3 extraction
 BASE_BUCKET_PATH="raw/vaccines"
-s3_prefix="$BASE_BUCKET_PATH/$STATE_ABBREV/$YEAR_MONTH/"
+s3_prefix="$BASE_BUCKET_PATH/year_month=$YEAR_MONTH/estabelecimento_uf=$STATE_ABBREV/"
 
 # Replace with your credentials
 S3_BUCKET=$UDACITY_CAPSTONE_PROJECT_BUCKET
