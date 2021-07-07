@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Build tap and target configuration JSON files and run extraction
+# Build tap and target configuration JSON files and run extraction saving CSVs locally
 # Usage: `bash run.sh SC 2021-01-01`
 
 set -e

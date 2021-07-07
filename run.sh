@@ -11,15 +11,16 @@ YEAR_MONTH=$1
 STATE_ABBREV=$2
 LOAD_MODE=$3
 
-# For S3 extraction
-BASE_BUCKET_PATH="raw/vaccines"
-s3_prefix="$BASE_BUCKET_PATH/year_month=$YEAR_MONTH/estabelecimento_uf=$STATE_ABBREV/"
-
-# Replace with your credentials
-S3_BUCKET=$UDACITY_CAPSTONE_PROJECT_BUCKET
+# Set credentials
 AWS_KEY="$UDACITY_AWS_KEY"
 AWS_SECRET="$UDACITY_AWS_SECRET"
 AWS_PROFILE="$UDACITY_AWS_PROFILE"
+
+# Configure S3 path
+S3_BUCKET=$UDACITY_CAPSTONE_PROJECT_BUCKET
+BASE_BUCKET_PATH="raw/vaccines"
+s3_prefix="$BASE_BUCKET_PATH/year_month=$YEAR_MONTH/estabelecimento_uf=$STATE_ABBREV/"
+
 
 # Build configuration files
 TAP_CONFIG_JSON=$( jq -n \
