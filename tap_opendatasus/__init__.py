@@ -1,6 +1,6 @@
 import json
 import os
-from datetime import datetime
+from datetime import datetime as dt
 from dateutil.relativedelta import relativedelta
 
 import singer
@@ -111,11 +111,17 @@ def sync_vaccines(state, stream) -> tuple:
     month_end_date = get_month_end_date(year_month)
     from_date = year_month  # First day of the month
     try:
-        while datetime.strptime(from_date, DATE_FORMAT) <= datetime.strptime(
-            month_end_date, DATE_FORMAT
-        ):
-            to_date = datetime.strftime(
-                datetime.strptime(from_date, DATE_FORMAT) + relativedelta(days=+1),
+        while True:
+            is_within_month = dt.strptime(from_date, DATE_FORMAT) <= dt.strptime(
+                month_end_date, DATE_FORMAT
+            )
+            is_future_date = dt.strptime(from_date, DATE_FORMAT) > dt.now()
+
+            if not is_within_month or is_future_date:
+                break
+
+            to_date = dt.strftime(
+                dt.strptime(from_date, DATE_FORMAT) + relativedelta(days=+1),
                 DATE_FORMAT,
             )
             LOGGER.info(
