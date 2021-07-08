@@ -1,7 +1,7 @@
 {
   "streams": [
     {
-      "tap_stream_id": "vaccines",
+      "tap_stream_id": "vaccinations",
       "key_properties": [],
       "schema": {
         "properties": {
@@ -207,7 +207,7 @@
         ],
         "additionalProperties": false
       },
-      "stream": "vaccines",
+      "stream": "vaccinations",
       "metadata": [
         {
           "breadcrumb": [],

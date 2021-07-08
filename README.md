@@ -8,7 +8,7 @@ This tap:
 
 - Pulls raw data from [Open Data SUS](https://opendatasus.saude.gov.br/)
 - Extracts the following resources:
-  - [Vaccines: _Campanha Nacional de Vacinação contra Covid-19_](https://opendatasus.saude.gov.br/dataset/covid-19-vacinacao)
+  - [Vaccinations: _Campanha Nacional de Vacinação contra Covid-19_](https://opendatasus.saude.gov.br/dataset/covid-19-vacinacao)
 - Outputs the schema for each resource
 - Incrementally pulls data based on the input state
 
@@ -47,7 +47,7 @@ deactivate
     source venv/bin/activate
     bash run.sh <state-abbrev> <year-month>
     ```
-    where `<state-abbrev>` is a valid Brazilian state abbreviation (e.g. `SP` for São Paulo) and `<year-month>` is the month in which vaccines were applied (e.g. `2021-01-01`). Data will be loaded into S3 bucket in partitioned fashion like `s3-bucket/.../SP/2021-01-01/vaccines_*.csv`.
+    where `<state-abbrev>` is a valid Brazilian state abbreviation (e.g. `SP` for São Paulo) and `<year-month>` is the month in which vaccinations were applied (e.g. `2021-01-01`). Data will be loaded into S3 bucket in partitioned fashion like `s3-bucket/.../SP/2021-01-01/vaccinations_*.csv`.
 
 ## Guide to add new endpoint
 

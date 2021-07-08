@@ -18,7 +18,7 @@ AWS_PROFILE="$UDACITY_AWS_PROFILE"
 
 # Configure S3 path
 S3_BUCKET=$UDACITY_CAPSTONE_PROJECT_BUCKET
-BASE_BUCKET_PATH="raw/vaccines"
+BASE_BUCKET_PATH="raw/vaccinations"
 s3_prefix="$BASE_BUCKET_PATH/year_month=$YEAR_MONTH/estabelecimento_uf=$STATE_ABBREV/"
 
 
@@ -35,7 +35,7 @@ TARGET_CONFIG_JSON=$( jq -n \
                   --arg ap "$AWS_PROFILE" \
                   --arg sb "$S3_BUCKET" \
                   --arg sp "$s3_prefix" \
-                  --arg qc "'" \
+                  --arg qc '"' \
                   --arg dl "," \
                   --arg co "gzip" \
                   '{disable_collection: true, aws_access_key_id: $ak, aws_secret_access_key: $ae, aws_profile: $ap, s3_bucket: $sb, s3_key_prefix: $sp, delimiter: $dl, quotechar: $qc, compression: $co}' )

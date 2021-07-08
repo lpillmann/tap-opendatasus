@@ -72,7 +72,7 @@ def discover():
     return Catalog(streams)
 
 
-def get_vaccines(state_abbrev, from_date, to_date):
+def get_vaccinations(state_abbrev, from_date, to_date):
     """
     Query Elasticsearch endpoint by state and date range
     Returns Elasticsearch Search object (generator)
@@ -93,8 +93,8 @@ def get_vaccines(state_abbrev, from_date, to_date):
     )
 
 
-def sync_vaccines(state, stream) -> tuple:
-    """Sync vaccines data from Open Data SUS
+def sync_vaccinations(state, stream) -> tuple:
+    """Sync vaccinations data from Open Data SUS
 
     Note: Singer state functionality is currently disabled in favor of the Shell script that passes year month
     and (Brazilian) state abbreviation. So the extraction sequence is determined externally as of now.
@@ -125,11 +125,11 @@ def sync_vaccines(state, stream) -> tuple:
                 DATE_FORMAT,
             )
             LOGGER.info(
-                f"\tsync_vaccines: Getting vaccines for {state_abbrev} from {from_date} to {to_date}"
+                f"\tsync_vaccinations: Getting vaccinations for {state_abbrev} from {from_date} to {to_date}"
             )
-            vaccines_search = get_vaccines(state_abbrev, from_date, to_date)
+            vaccinations_search = get_vaccinations(state_abbrev, from_date, to_date)
             payload = dict()
-            for hit in vaccines_search.scan():
+            for hit in vaccinations_search.scan():
                 # Assign one by one to deal with edge cases (e.g. columns with @ prefix and year_month)
                 # fmt: off
                 payload["document_id"] = hit["document_id"]
@@ -184,8 +184,8 @@ def sync(state, stream):
     """Switch to choose endpoint sync function"""
     return_val = state
 
-    if stream.tap_stream_id == "vaccines":
-        return_val = sync_vaccines(state, stream)
+    if stream.tap_stream_id == "vaccinations":
+        return_val = sync_vaccinations(state, stream)
     return return_val
 
 
