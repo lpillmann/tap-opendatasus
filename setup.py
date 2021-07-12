@@ -12,8 +12,8 @@ setup(
     install_requires=[
         # NB: Pin these to a more specific version for tap reliability
         "singer-python",
-        "elasticsearch",
-        "elasticsearch-dsl",
+        "elasticsearch==7.5.1",
+        "elasticsearch-dsl==7.3.0",
     ],
     entry_points="""
     [console_scripts]
