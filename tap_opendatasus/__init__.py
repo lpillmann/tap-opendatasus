@@ -11,8 +11,6 @@ from singer.schema import Schema
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search
 
-from utils import get_month_end_date
-
 
 REQUIRED_CONFIG_KEYS = ["year_month", "state_abbrev"]
 CONFIG = {
@@ -70,6 +68,13 @@ def discover():
             )
         )
     return Catalog(streams)
+
+
+def get_month_end_date(year_month: str) -> str:
+    """Receives year month e.g. 2021-01-01 and returns 2021-01-31"""
+    year, month, _ = year_month.split("-")
+    _, last_day = calendar.monthrange(int(year), int(month))
+    return f"{year}-{month}-{last_day}"
 
 
 def get_vaccinations(state_abbrev, from_date, to_date):
