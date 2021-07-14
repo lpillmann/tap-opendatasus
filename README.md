@@ -42,12 +42,15 @@ deactivate
 ```
 
 ## How to use
-- Run tap & target with:
-    ```bash
-    source venv/bin/activate
-    bash run.sh <state-abbrev> <year-month>
-    ```
-    where `<state-abbrev>` is a valid Brazilian state abbreviation (e.g. `SP` for São Paulo) and `<year-month>` is the month in which vaccinations were applied (e.g. `2021-01-01`). Data will be loaded into S3 bucket in partitioned fashion like `s3-bucket/.../SP/2021-01-01/vaccinations_*.csv`.
+Run tap & target with:
+```bash
+source venv/bin/activate
+bash run.sh <year-month> <state-abbrev> 
+```
+where `<year-month>` is the month in which vaccinations were applied (e.g. `2021-01-01`) and `<state-abbrev>` is a valid Brazilian state abbreviation (e.g. `SP` for São Paulo). Data will be loaded into S3 bucket in partitioned fashion like `s3-bucket/.../year_month=2021-01-01/estabelecimento_uf=SP/vaccinations_*.csv`.
+
+### Why we need Shell scripts
+The Singer target in use doesn't allow to set the S3 object key dynamically in Python. This is needed in order to place the CSV into partitioned "directories" for each set of parameters used in the extraction. The only way to do that is to change the JSON configuration file passed when running the extraction command. The `run.sh` script enables dynamic creation of the configuration files for the tap and target based or parameters passed. The other Shell scripts (`run_all.sh` and `run_state_abrev.sh`) call the first script passing parameters from lists saved as TXT files (`year_month` and `state_abbrev` values). Finally, `run_local.sh` is used only for development purposes with local CSV target.
 
 ## Guide to add new endpoint
 

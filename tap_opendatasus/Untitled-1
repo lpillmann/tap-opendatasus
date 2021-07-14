@@ -1,9 +1,0 @@
-bash run.sh 2021-07-01 PE replace \
-    && bash run.sh 2021-07-01 RS replace \
-    && bash run.sh 2021-07-01 PR replace \
-    && bash run.sh 2021-07-01 MA replace \
-    && bash run.sh 2021-07-01 AC replace \
-    && bash run.sh 2021-07-01 PE replace
-
-# doing incremental load
-# before: 1200434
