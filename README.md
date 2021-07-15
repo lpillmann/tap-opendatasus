@@ -57,6 +57,9 @@ Data will be loaded into S3 bucket in partitioned fashion like `s3-bucket/.../ye
 ### Why we need Shell scripts
 The Singer target in use doesn't allow to set the S3 object key dynamically in Python. This is needed in order to place the CSV into partitioned "directories" for each set of parameters used in the extraction. The only way to do that is to change the JSON configuration file passed when running the extraction command. The `run.sh` script enables dynamic creation of the configuration files for the tap and target based or parameters passed. The other Shell scripts (`run_all.sh` and `run_state_abrev.sh`) call the first script passing parameters from lists saved as TXT files (`year_month` and `state_abbrev` values). Finally, `run_local.sh` is used only for development purposes with local CSV target.
 
+### Examples of usage
+- [COVID-19 Vaccination in Brazil - Data Pipeline](https://github.com/lpillmann/covid19-vaccination-data-pipeline): This project implements an automated data pipeline to ingest and model vaccination data from the Brazilian government. The tap is used together with target S3 CSV, automated using Airflow, and modeled using SQL in AWS Redshift.
+
 ## Guide to add new endpoint
 
 - Check its documentation
