@@ -182,6 +182,7 @@ def sync_vaccinations(state, stream) -> tuple:
 
     except Exception as e:
         LOGGER.fatal(f"Error: {repr(e)}")
+        raise e
 
     return "state_abbrev_year_month", f"{state_abbrev}|{from_date}"
 
