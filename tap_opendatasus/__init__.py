@@ -17,6 +17,7 @@ REQUIRED_CONFIG_KEYS = ["year_month", "state_abbrev"]
 CONFIG = {
     "year_month": None,
     "state_abbrev": None,
+    "extract_until_date": None,
 }
 STATE = {}
 LOGGER = singer.get_logger()
@@ -91,7 +92,7 @@ def is_within_month(date: str, year_month: str) -> bool:
 
 def query_vaccinations(state_abbrev, from_date, to_date):
     """
-    Query Elasticsearch endpoint by state and date range
+    Query Elasticsearch endpoint by state and date range (from_date is inclusive, to_date is not)
     Returns Elasticsearch Search object (generator)
     """
     client = Elasticsearch(hosts=ES_HOST, http_auth=(USER, PASSWORD))
@@ -128,6 +129,7 @@ def sync_vaccinations(state, stream) -> tuple:
 
     year_month = CONFIG.get("year_month")
     state_abbrev = CONFIG.get("state_abbrev")
+    extract_until_date = CONFIG.get("extract_until_date")
 
     # Parse state_abbrev_from_date string
     state_abbrev_from_date = state["bookmarks"][stream.tap_stream_id].get(
@@ -144,7 +146,7 @@ def sync_vaccinations(state, stream) -> tuple:
         from_date = year_month
 
     try:
-        while dt.strptime(from_date, DATE_FORMAT) <= dt.utcnow():
+        while dt.strptime(from_date, DATE_FORMAT) <= dt.strptime(extract_until_date, DATE_FORMAT):
             # Sync only within year_month passed
             if not is_within_month(from_date, year_month):
                 LOGGER.warning(

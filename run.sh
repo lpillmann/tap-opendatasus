@@ -10,33 +10,37 @@
 
 set -e
 
-YEAR_MONTH=$1
-STATE_ABBREV=$2
-LOAD_MODE=$3
+extract_until_date=$1
+state_abbrev=$2
+load_mode=$3
+
+# Prepare year_month value to use as partition identifier
+year_month="${extract_until_date::-3}-01"
 
 # Set credentials
-AWS_KEY="$UDACITY_AWS_KEY"
-AWS_SECRET="$UDACITY_AWS_SECRET"
+aws_key="$UDACITY_AWS_KEY"
+aws_secret="$UDACITY_AWS_SECRET"
 
 # Configure S3 path
-S3_BUCKET=$UDACITY_CAPSTONE_PROJECT_BUCKET
-BASE_BUCKET_PATH="raw/vaccinations"
-s3_prefix="$BASE_BUCKET_PATH/year_month=$YEAR_MONTH/estabelecimento_uf=$STATE_ABBREV"
+s3_bucket=$UDACITY_CAPSTONE_PROJECT_BUCKET
+base_bucket_path="raw/vaccinations"
+s3_prefix="$base_bucket_path/year_month=$year_month/estabelecimento_uf=$state_abbrev"
 
 state_json_filepath="state.json"
 
 # Build configuration files
-TAP_CONFIG_JSON=$( jq -n \
-                  --arg ym "$YEAR_MONTH" \
-                  --arg sa "$STATE_ABBREV" \
-                  '{disable_collection: true, year_month: $ym, state_abbrev: $sa}' )
+tap_config_json=$( jq -n \
+                  --arg ym "$year_month" \
+                  --arg sa "$state_abbrev" \
+                  --arg ed "$extract_until_date" \
+                  '{disable_collection: true, year_month: $ym, state_abbrev: $sa, extract_until_date: $ed}' )
 
 # S3 CSV
-TARGET_CONFIG_JSON=$( jq -n \
-                  --arg ak "$AWS_KEY" \
-                  --arg ae "$AWS_SECRET" \
+target_config_json=$( jq -n \
+                  --arg ak "$aws_key" \
+                  --arg ae "$aws_secret" \
                   --arg ap "$AWS_PROFILE" \
-                  --arg sb "$S3_BUCKET" \
+                  --arg sb "$s3_bucket" \
                   --arg sp "$s3_prefix/" \
                   --arg qc '"' \
                   --arg dl "," \
@@ -44,13 +48,13 @@ TARGET_CONFIG_JSON=$( jq -n \
                   '{disable_collection: true, aws_access_key_id: $ak, aws_secret_access_key: $ae, aws_profile: $ap, s3_bucket: $sb, s3_key_prefix: $sp, delimiter: $dl, quotechar: $qc, compression: $co}' )
 
 
-echo $TAP_CONFIG_JSON > config.json
-echo $TARGET_CONFIG_JSON > s3_csv_config.json
+echo $tap_config_json > config.json
+echo $target_config_json > s3_csv_config.json
 
-if [ "$LOAD_MODE" = "replace" ]
+if [ "$load_mode" = "replace" ]
 then
     # Move current files to trash that will be emptied at the end if execution succeeds
-    remove_from_destination="s3://$S3_BUCKET/$s3_prefix"
+    remove_from_destination="s3://$s3_bucket/$s3_prefix"
     trash_destination="$remove_from_destination/trash/"
     echo "Replace mode: moving existing file(s) to $trash_destination"
     aws s3 mv "$remove_from_destination" "$trash_destination" --include "*.csv*" --recursive
