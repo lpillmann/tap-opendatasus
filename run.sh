@@ -14,12 +14,11 @@ LOAD_MODE=$3
 # Set credentials
 AWS_KEY="$UDACITY_AWS_KEY"
 AWS_SECRET="$UDACITY_AWS_SECRET"
-AWS_PROFILE="$UDACITY_AWS_PROFILE"
 
 # Configure S3 path
 S3_BUCKET=$UDACITY_CAPSTONE_PROJECT_BUCKET
 BASE_BUCKET_PATH="raw/vaccinations"
-s3_prefix="$BASE_BUCKET_PATH/year_month=$YEAR_MONTH/estabelecimento_uf=$STATE_ABBREV/"
+s3_prefix="$BASE_BUCKET_PATH/year_month=$YEAR_MONTH/estabelecimento_uf=$STATE_ABBREV"
 
 
 # Build configuration files
@@ -34,7 +33,7 @@ TARGET_CONFIG_JSON=$( jq -n \
                   --arg ae "$AWS_SECRET" \
                   --arg ap "$AWS_PROFILE" \
                   --arg sb "$S3_BUCKET" \
-                  --arg sp "$s3_prefix" \
+                  --arg sp "$s3_prefix/" \
                   --arg qc '"' \
                   --arg dl "," \
                   --arg co "gzip" \
@@ -46,11 +45,33 @@ echo $TARGET_CONFIG_JSON > s3_csv_config.json
 
 if [ "$LOAD_MODE" = "replace" ]
 then
-    # Clean up S3 destination
+    # Move current files to trash that will be emptied at the end if execution succeeds
     remove_from_destination="s3://$S3_BUCKET/$s3_prefix"
-    echo "Replace mode: Removing current file at $remove_from_destination"
-    aws s3 rm "$remove_from_destination" --profile "$UDACITY_AWS_PROFILE" --include "*.csv*" --recursive
+    trash_destination="$remove_from_destination/trash/"
+    echo "Replace mode: moving existing file(s) to $trash_destination"
+    aws s3 mv "$remove_from_destination" "$trash_destination" --include "*.csv*" --recursive
+
+    # Run tap and target
+    if make sync-s3-csv
+    then
+        # Remove trash contents
+        echo "Replace mode: emptying trash contents from $trash_destination"
+        aws s3 rm "$trash_destination" --recursive
+    else
+        # Recover from trash
+        echo "Replace mode: abort removal due to execution error. Recovering from trash to $remove_from_destination"
+        if aws s3 mv "$trash_destination" "$remove_from_destination" --include "*.csv*" --recursive
+        then
+            # Remove trash folder
+            aws s3 rm "$trash_destination" --recursive
+        fi
+    fi
+else
+    # Run tap and target just adding new files to the destination
+    make sync-s3-csv
 fi
 
-# Run tap and target
-make sync-s3-csv
+
+
+
+
