@@ -78,7 +78,15 @@ def get_month_end_date(year_month: str) -> str:
     return f"{year}-{month}-{last_day}"
 
 
-def get_vaccinations(state_abbrev, from_date, to_date):
+def is_within_month(date: str, year_month: str) -> bool:
+    """Checks if date is within given month"""
+    month_end_date = get_month_end_date(year_month)
+    return dt.strptime(date, DATE_FORMAT) >= dt.strptime(
+        year_month, DATE_FORMAT
+    ) and dt.strptime(date, DATE_FORMAT) <= dt.strptime(month_end_date, DATE_FORMAT)
+
+
+def query_vaccinations(state_abbrev, from_date, to_date):
     """
     Query Elasticsearch endpoint by state and date range
     Returns Elasticsearch Search object (generator)
@@ -102,8 +110,11 @@ def get_vaccinations(state_abbrev, from_date, to_date):
 def sync_vaccinations(state, stream) -> tuple:
     """Sync vaccinations data from Open Data SUS
 
-    Note: Singer state functionality is currently disabled in favor of the Shell script that passes year month
-    and (Brazilian) state abbreviation. So the extraction sequence is determined externally as of now.
+    Uses Singer state functionality to sync incrementally one day at a time
+    for attribute `vacina_dataAplicacao` (vaccination date).
+
+    When state is null, starts from the first day of the month according to `year_month`
+    passed in config.
 
     """
     singer.write_schema(
@@ -114,18 +125,31 @@ def sync_vaccinations(state, stream) -> tuple:
 
     year_month = CONFIG.get("year_month")
     state_abbrev = CONFIG.get("state_abbrev")
-    month_end_date = get_month_end_date(year_month)
-    from_date = year_month  # First day of the month
-    try:
-        while True:
-            is_within_month = dt.strptime(from_date, DATE_FORMAT) <= dt.strptime(
-                month_end_date, DATE_FORMAT
-            )
-            is_future_date = dt.strptime(from_date, DATE_FORMAT) > dt.now()
 
-            if not is_within_month or is_future_date:
+    # Parse state_abbrev_from_date string
+    state_abbrev_from_date = state["bookmarks"][stream.tap_stream_id].get(
+        "state_abbrev_from_date"
+    )
+    if state_abbrev_from_date:
+        _, from_date = state_abbrev_from_date.split("|")
+        LOGGER.info(f"Tap state successfully read, setting from_date to {from_date}")
+    else:
+        # If state is None, start from first day of the month
+        LOGGER.info(
+            f"Tap state is None, setting from_date to first day of the month: {year_month}"
+        )
+        from_date = year_month
+
+    try:
+        while dt.strptime(from_date, DATE_FORMAT) <= dt.utcnow():
+            # Sync only within year_month passed
+            if not is_within_month(from_date, year_month):
+                LOGGER.warning(
+                    f"Parameter from_date {from_date} is not within year_month {year_month}. Skipping."
+                )
                 break
 
+            # Query one day at a time
             to_date = dt.strftime(
                 dt.strptime(from_date, DATE_FORMAT) + relativedelta(days=+1),
                 DATE_FORMAT,
@@ -133,7 +157,7 @@ def sync_vaccinations(state, stream) -> tuple:
             LOGGER.info(
                 f"\tsync_vaccinations: Getting vaccinations for {state_abbrev} from {from_date} to {to_date}"
             )
-            vaccinations_search = get_vaccinations(state_abbrev, from_date, to_date)
+            vaccinations_search = query_vaccinations(state_abbrev, from_date, to_date)
             payload = dict()
             for hit in vaccinations_search.scan():
                 # Assign one by one to deal with edge cases (e.g. columns with @ prefix and year_month)
@@ -184,7 +208,7 @@ def sync_vaccinations(state, stream) -> tuple:
         LOGGER.fatal(f"Error: {repr(e)}")
         raise e
 
-    return "state_abbrev_year_month", f"{state_abbrev}|{from_date}"
+    return "state_abbrev_from_date", f"{state_abbrev}|{from_date}"
 
 
 def sync(state, stream):

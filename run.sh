@@ -2,8 +2,11 @@
 
 # Build tap and target configuration JSON files and run extraction
 # Usage: 
-#    - Extract and load empty destination:     `bash run.sh SC 2021-01-01`
-#    - Extract and replace existing contents:  `bash run.sh SC 2021-01-01 replace`
+#    - Load incrementally based on last state within the month:
+#        `bash run.sh SC 2021-01-01`
+#    - Replace contents and load whole month (useful to run once a month
+#      to clean up any duplication issues or get records that were eventually updated):  
+#        `bash run.sh SC 2021-01-01 replace`
 
 set -e
 
@@ -20,6 +23,7 @@ S3_BUCKET=$UDACITY_CAPSTONE_PROJECT_BUCKET
 BASE_BUCKET_PATH="raw/vaccinations"
 s3_prefix="$BASE_BUCKET_PATH/year_month=$YEAR_MONTH/estabelecimento_uf=$STATE_ABBREV"
 
+state_json_filepath="state.json"
 
 # Build configuration files
 TAP_CONFIG_JSON=$( jq -n \
@@ -50,6 +54,12 @@ then
     trash_destination="$remove_from_destination/trash/"
     echo "Replace mode: moving existing file(s) to $trash_destination"
     aws s3 mv "$remove_from_destination" "$trash_destination" --include "*.csv*" --recursive
+
+    # Set state to null, so that extraction begins on the first day of the month
+    null_state_json=$( jq -n \
+                  '{"bookmarks": {"vaccinations": {"state_abbrev_from_date": null}}, "currently_syncing": null}' )
+
+    echo $null_state_json > "$state_json_filepath"
 
     # Run tap and target
     if make sync-s3-csv
