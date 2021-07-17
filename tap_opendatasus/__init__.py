@@ -81,9 +81,12 @@ def get_month_end_date(year_month: str) -> str:
 def is_within_month(date: str, year_month: str) -> bool:
     """Checks if date is within given month"""
     month_end_date = get_month_end_date(year_month)
-    return dt.strptime(date, DATE_FORMAT) >= dt.strptime(
-        year_month, DATE_FORMAT
-    ) and dt.strptime(date, DATE_FORMAT) <= dt.strptime(month_end_date, DATE_FORMAT)
+    return all(
+        [
+            dt.strptime(date, DATE_FORMAT) >= dt.strptime(year_month, DATE_FORMAT),
+            dt.strptime(date, DATE_FORMAT) <= dt.strptime(month_end_date, DATE_FORMAT),
+        ]
+    )
 
 
 def query_vaccinations(state_abbrev, from_date, to_date):
