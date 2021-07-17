@@ -14,6 +14,7 @@ setup(
         "singer-python",
         "elasticsearch==7.5.1",
         "elasticsearch-dsl==7.3.0",
+        "certifi==2021.5.30",
     ],
     entry_points="""
     [console_scripts]
